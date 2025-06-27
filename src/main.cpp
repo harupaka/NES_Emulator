@@ -19,7 +19,7 @@
 
 #define SDL_MAIN_HANDLED
 
-const std::string CARTRIDGE = "2048";
+const std::string CARTRIDGE = "nestest";
 
 static NES_Manager* create_mgr() {
     NES_Manager* mgr = new NES_Manager;
@@ -28,70 +28,9 @@ static NES_Manager* create_mgr() {
     mgr->NMIpin = true;
     mgr->IRQpin = true;
 
-    mgr->cycle = 0;
+    mgr->cycle = -1;
 
     return mgr;
-}
-
-//CPU�쐬
-static CPU_Emulator* create_cpu() {
-    CPU_Emulator* cpu = new CPU_Emulator;
-    cpu->cpu_mem = new uint8_t[256*256];
-    memset(cpu->cpu_mem, 0, 256 * 256);
-
-    //������
-    cpu->A = 0;
-    cpu->X = 0;
-    cpu->Y = 0;
-    cpu->PC = 0x8000;
-    cpu->SP = 0x01FD;
-    cpu->N = false;
-    cpu->V = false;
-    cpu->B = false;
-    cpu->D = false;
-    cpu->I = true;
-    cpu->Z = false;
-    cpu->C = false;
-
-    return cpu;
-}
-
-//PPU�쐬
-static PPU_Emulator* create_ppu() {
-    PPU_Emulator* ppu = new PPU_Emulator;
-    ppu->ppu_mem = new uint8_t[4*16*256];
-    ppu->sprite = new uint8_t[256];
-    ppu->OAM_buffer = new uint8_t[8 * 4];
-    ppu->bank = new uint8_t[8192 * 8];
-    memset(ppu->ppu_mem, 0, 4 * 16 * 256);
-    memset(ppu->sprite, 0, 256);
-    memset(ppu->OAM_buffer, 0, 8 * 4);
-    memset(ppu->bank, 0, 8192 * 8);
-
-    ppu->buffer = 0;
-    ppu->mapper = 0;
-
-    ppu->l_addr = false;
-    ppu->vram_addr = 0;
-    ppu->sprite_addr = 0;
-    ppu->OAM_num = 0;
-
-    ppu->Vblank_trigger = false;
-    ppu->Nametable_arrangement = false;
-    ppu->sprite0_hit_flag = false;
-
-    return ppu;
-}
-
-//�R���g���[���[�쐬
-static Controller_Emulator* create_controller() {
-    Controller_Emulator* controller = new Controller_Emulator;
-    controller->signal = false;
-    controller->trigger = false;
-    controller->reg = 0;
-
-    controller->index = 1;
-    return controller;
 }
 
 static NES_Emulator* create_nes(CPU_Emulator* cpu, PPU_Emulator* ppu, NES_Manager* mgr, Controller_Emulator* controller) {
@@ -104,19 +43,8 @@ static NES_Emulator* create_nes(CPU_Emulator* cpu, PPU_Emulator* ppu, NES_Manage
     return nes;
 }
 
-static Screen* create_screen() {
-    Screen* canvas = new Screen;
-    canvas->screen = new uint8_t[256*240];
-    memset(canvas->screen, 0, 256 * 240);
-    canvas->line = 0;
-
-    canvas->complete = false;
-    canvas->drawing = false;
-    return canvas;
-}
-
 //確保したメモリの解放
-static void destroy_nes(CPU_Emulator* cpu, PPU_Emulator* ppu, NES_Manager* mgr, NES_Emulator* nes, Screen* canvas) {
+static void destroy_nes(CPU_Emulator* cpu, PPU_Emulator* ppu, Controller_Emulator* con, NES_Manager* mgr, NES_Emulator* nes, Screen* canvas) {
     delete[] cpu->cpu_mem;
     delete cpu;
     delete[] ppu->ppu_mem;
@@ -124,6 +52,7 @@ static void destroy_nes(CPU_Emulator* cpu, PPU_Emulator* ppu, NES_Manager* mgr, 
     delete[] ppu->OAM_buffer;
     delete[] ppu->bank;
     delete ppu;
+    delete con;
     delete mgr;
     delete nes;
     delete[] canvas->screen;
@@ -157,9 +86,10 @@ int main(int, char*[]) {
     Uint32 last_draw = SDL_GetTicks();
     unsigned int clock;
 
+    RESET(nes->Cpu);
+
     //メインループ
     while (1) {
-
         if (mgr->Reset) {
             RESET(nes->Cpu);
             break;
@@ -189,7 +119,7 @@ int main(int, char*[]) {
         }
     }
 
-    destroy_nes(nes->Cpu, nes->Ppu, nes->Mgr, nes, canvas);
+    destroy_nes(nes->Cpu, nes->Ppu, nes->Con, nes->Mgr, nes, canvas);
     delete_display();
     delete[] index_chr;
 

@@ -114,7 +114,7 @@ void PPU(NES_Emulator* nes, Screen* canvas, uint8_t* index_chr, unsigned int clk
             mgr->cycle -= 341;
         }
         //全行完了
-        if ((canvas->line == 262) && (mgr->cycle == 0)) {
+        if ((canvas->line == 259) && (mgr->cycle == 340)) {
             canvas->line = 0;
             canvas->complete = false;
             cpu->cpu_mem[0x2002] &= 0b01111111;
@@ -122,7 +122,7 @@ void PPU(NES_Emulator* nes, Screen* canvas, uint8_t* index_chr, unsigned int clk
             return;
         }
         //画面の行外範囲
-        else if ((canvas->line == 241) && (mgr->cycle == 0)) {
+        else if ((canvas->line == 240) && (mgr->cycle == 0)) {
             cpu->cpu_mem[0x2002] |= 0b10000000;
             if (((cpu->cpu_mem[0x2000] & 0b10000000) == 0b10000000) && (ppu->Vblank_trigger)) {
                 mgr->NMIpin = false;
@@ -130,7 +130,7 @@ void PPU(NES_Emulator* nes, Screen* canvas, uint8_t* index_chr, unsigned int clk
             }
         }
         //画面内最終行
-        else if ((canvas->line == 240) && (mgr->cycle == 0)) {
+        else if ((canvas->line == 239) && (mgr->cycle == 340)) {
             canvas->complete = true;
             ppu->Vblank_trigger = true;
             canvas->drawing = true;
@@ -166,7 +166,7 @@ void PPU(NES_Emulator* nes, Screen* canvas, uint8_t* index_chr, unsigned int clk
                 palette_index = make_palette_index(ppu->ppu_mem, nametable, row * 32 + tile);
                 sprite_pixel_x = pixel_x % 8;
                 sprite_pixel_y = pixel_y % 8;
-                canvas->screen[256 * (row * 8 + sprite_pixel_y) + (tile * 8 + sprite_pixel_x)] = ppu->ppu_mem[0x3F00 + palette_index * 4 + index_chr[sprite_index * 64 + 8 * sprite_pixel_y + sprite_pixel_x]];
+                canvas->screen[256 * pixel_y + pixel_x] = ppu->ppu_mem[0x3F00 + palette_index * 4 + index_chr[sprite_index * 64 + 8 * sprite_pixel_y + sprite_pixel_x]];
                 
                 if(pixel_y != 0){
                     int8_t sprite_MAX = (ppu->OAM_num > 8) ? 7 : ppu->OAM_num-1;

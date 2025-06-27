@@ -89,8 +89,10 @@ void Load(NES_Emulator* nes, uint8_t* index_chr, const std::string name) {
 
     //CHRを書き込み
     for (unsigned int j = 0; j < (unsigned int)size_CHR; j++) {
-        if(j == 0) fread(ppu->ppu_mem, sizeof(uint8_t), 8192, fp);
         fread(ppu->bank + (0x2000 * j), sizeof(uint8_t), 8192, fp);
+        if (j == 0) {
+            memcpy(ppu->ppu_mem, ppu->bank, 8192);
+        }
     }
 
     make_CHR(index_chr, ppu->ppu_mem);
