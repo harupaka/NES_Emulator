@@ -7,6 +7,7 @@ Visual Studio 2022 上で編集を行っていた際は、フォルダ分けが�
 
 ## 動作確認
 ### nestest（CPUテスト）
+![NESTEST](img/nestest.png)  
 nesファイル  
 https://github.com/christopherpow/nes-test-roms/blob/master/other/nestest.nes  
 (この人が作ったものかどうかはわからない)
