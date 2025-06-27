@@ -7,14 +7,17 @@ Visual Studio 2022 上で編集を行っていた際は、フォルダ分けが�
 
 ## 動作確認
 ### nestest（CPUテスト）
+確認画像  
 ![NESTEST](img/nestest.png)  
 nesファイル  
 https://github.com/christopherpow/nes-test-roms/blob/master/other/nestest.nes  
 (この人が作ったものかどうかはわからない)
 ### snake
+プレイ動画  
 [![Watch the video](https://img.youtube.com/vi/GS9c9OCNs4M/hqdefault.jpg)](https://youtu.be/GS9c9OCNs4M)
 
 ### 2048
+プレイ動画  
 [![Watch the video](https://img.youtube.com/vi/deF4jzUT_3w/hqdefault.jpg)](https://youtu.be/deF4jzUT_3w)  
 nesファイル  
 https://www.romhacking.net/homebrew/65/
